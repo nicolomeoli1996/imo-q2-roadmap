@@ -1,219 +1,154 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en" class="antialiased"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>IMO 3 - Q2 2026 Roadmap</title>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f5f5f0; color: #1a1a1a; }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { font-family: "Figtree", sans-serif; -webkit-font-smoothing: antialiased; background: #f6f5f3; color: #090806ec; }
 
   /* ── TOP BAR ── */
   .topbar {
-    background: #1a1a1a; color: #fff; padding: 12px 28px;
+    background: #0b0b0a; color: #fff; padding: 16px 24px;
     display: flex; align-items: center; justify-content: space-between;
     position: sticky; top: 0; z-index: 100;
   }
   .topbar-left { display: flex; align-items: center; gap: 16px; }
-  .topbar-title { font-size: 15px; font-weight: 700; letter-spacing: -0.3px; }
+  .topbar-title { font-size: 16px; font-weight: 600; letter-spacing: -0.25px; color: #ffffff; }
   .topbar-badge {
-    background: #D2F55E; color: #1a1a1a; font-size: 11px; font-weight: 700;
-    padding: 3px 10px; border-radius: 4px; letter-spacing: 0.3px;
+    background: #e1e51a; color: #29320c; font-size: 12px; font-weight: 600;
+    padding: 4px 12px; border-radius: 8px; letter-spacing: 0.3px;
   }
-  .topbar-update { font-size: 11px; color: rgba(255,255,255,0.45); font-weight: 400; }
+  .topbar-update { font-size: 12px; color: #ffffffb2; font-weight: 400; }
   .topbar-right { display: flex; align-items: center; gap: 16px; }
-  .topbar-legend { display: flex; gap: 14px; align-items: center; }
-  .topbar-legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: rgba(255,255,255,0.55); font-weight: 500; }
-  .topbar-legend-dot { width: 8px; height: 8px; border-radius: 2px; }
-
-  /* ── USAGE GUIDE ── */
-  .usage-guide {
-    background: #eaeae5; border-bottom: 1px solid #ddddd8;
-    padding: 10px 28px; font-size: 12px; color: #6b6b60; font-weight: 400;
-  }
-  .usage-guide strong { color: #1a1a1a; font-weight: 600; }
 
   /* ── ROADMAP GRID ── */
-  .roadmap-container { overflow: auto; padding: 0; max-height: calc(100vh - 82px); position: relative; }
+  .roadmap-container { overflow: auto; padding: 0; max-height: calc(100vh - 56px); position: relative; }
   .roadmap { display: grid; }
 
   /* ── MONTH HEADER ── */
   .month-group-header {
-    background: #f5f5f0; text-align: center; padding: 14px 4px 10px;
-    font-size: 13px; font-weight: 700; color: #1a1a1a; letter-spacing: 0.5px;
+    background: #f6f5f3; text-align: center; padding: 16px 4px 12px;
+    font-size: 12px; font-weight: 600; color: #090806ec; letter-spacing: 1.5px;
     text-transform: uppercase;
-    border-bottom: 2px solid #d5d5cc; border-right: 1px solid #e0e0d8;
+    border-bottom: 1px solid #756b571a; border-right: 1px solid #756b571a;
     position: sticky; top: 0; z-index: 12;
   }
-  .month-group-header.corner { border-right: 1px solid #d5d5cc; position: sticky; left: 0; z-index: 14; }
+  .month-group-header.corner { border-right: 1px solid #8f867633; position: sticky; left: 0; z-index: 14; }
 
   /* ── WEEK HEADER ── */
   .week-header {
-    background: #ededea; text-align: center; padding: 8px 2px;
-    font-size: 10px; font-weight: 600; color: #8a8a80; border-right: 1px solid #e0e0d8;
-    border-bottom: 1px solid #d5d5cc;
-    position: sticky; top: 40px; z-index: 11;
-    text-transform: uppercase; letter-spacing: 0.5px;
+    background: #5f4f300d; text-align: center; padding: 8px 4px;
+    font-size: 12px; font-weight: 500; color: #16140e8c; border-right: 1px solid #756b571a;
+    border-bottom: 1px solid #8f867633;
+    position: sticky; top: 44px; z-index: 11;
+    letter-spacing: 0.3px;
   }
   .week-header.corner {
-    background: #ededea; border-right: 1px solid #d5d5cc;
-    font-size: 11px; color: #6b6b60; font-weight: 700; letter-spacing: 0;
+    background: #5f4f300d; border-right: 1px solid #8f867633;
+    font-size: 12px; color: #16140e8c; font-weight: 600;
     position: sticky; left: 0; z-index: 13;
   }
-  .week-header.current { background: #e6f5c2; color: #4a6600; }
-  .week-header.month-start { border-left: 2px solid #d5d5cc; }
+  .week-header.current { background: #e1e51a33; color: #46520f; }
+  .week-header.month-start { border-left: 1px solid #8f867633; }
 
   /* ── SWIMLANE LABEL ── */
   .swimlane-label {
-    background: #fff; border-right: 1px solid #e0e0d8; border-bottom: 2px solid #d5d5cc;
-    padding: 16px 18px; font-size: 12px; font-weight: 700; line-height: 1.3;
-    display: flex; flex-direction: column; justify-content: center; gap: 0;
-    min-height: 56px;
+    background: #ffffff; border-right: 1px solid #756b571a; border-bottom: 1px solid #8f867633;
+    padding: 16px 20px; line-height: 1.3;
+    display: flex; flex-direction: column; justify-content: center; gap: 4px;
+    min-height: 64px;
     position: sticky; left: 0; z-index: 10;
   }
-  .swimlane-label .sl-name { font-size: 15px; font-weight: 800; color: #1a1a1a; }
-  .swimlane-label.parent-label { border-bottom: 2px solid #d5d5cc; }
-
-  .subrow-label {
-    background: #fafaf6; border-right: 1px solid #e8e8e0; border-bottom: 1px solid #eaeae5;
-    padding: 8px 14px; font-size: 12px; font-weight: 500; color: #4a4a40;
-    display: flex; align-items: center; gap: 0; min-height: 48px;
-    position: sticky; left: 160px; z-index: 10;
-  }
-  .subrow-label.last-subrow { border-bottom: 2px solid #d5d5cc; }
-  .subrow-label .subrow-name { font-weight: 600; font-size: 13px; }
+  .swimlane-label .sl-name { font-size: 14px; font-weight: 600; color: #090806ec; }
 
   /* ── CELLS ── */
   .swimlane-cell {
-    background: #fff; border-right: 1px solid #eaeae5; border-bottom: 2px solid #d5d5cc;
-    padding: 6px 5px; min-height: 56px; display: flex; flex-direction: column;
+    background: #ffffff; border-right: 1px solid #756b571a; border-bottom: 1px solid #8f867633;
+    padding: 8px 6px; min-height: 64px; display: flex; flex-direction: column;
   }
-  .swimlane-cell.current-week { background: #f9fce8; }
-  .swimlane-cell.month-start { border-left: 2px solid #d5d5cc; }
+  .swimlane-cell.current-week { background: #e1e51a0d; }
+  .swimlane-cell.month-start { border-left: 1px solid #8f867633; }
   .swimlane-cell .cell-items { flex: 1; }
-  .swimlane-cell.subrow-cell { min-height: 48px; border-bottom: 1px solid #eaeae5; }
-  .swimlane-cell.subrow-cell.last-subrow { border-bottom: 2px solid #d5d5cc; }
 
   /* ── ITEM CARDS ── */
   .item-card {
-    background: #e8edd8; border: 1px solid #d5dac5; border-radius: 6px;
-    padding: 10px 12px; margin-bottom: 5px; font-size: 11px;
-    line-height: 1.4; word-break: break-word;
-    transition: box-shadow 0.15s, transform 0.1s;
+    background: #ffffff; border: 1px solid #756b571a; border-radius: 12px;
+    padding: 12px 14px; margin-bottom: 6px;
+    font-size: 12px; line-height: 1.4; word-break: break-word;
+    box-shadow: 0px 1px 2px rgba(119,111,95,0.06), 0px 1px 3px rgba(117,107,87,0.04);
+    transition: box-shadow 0.2s ease, transform 0.15s ease;
     cursor: pointer; position: relative;
   }
-  .item-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); transform: translateY(-1px); }
-  .item-card .item-title { font-weight: 700; font-size: 12px; color: #1a1a1a; display: block; }
-  .item-card .item-desc { font-size: 11px; color: #5a5a50; margin-top: 4px; line-height: 1.45; font-weight: 400; display: block; }
-  .item-card .item-date { font-weight: 700; font-size: 11px; color: #1a1a1a; display: block; margin-top: 6px; }
-  .item-card .item-countries { font-size: 10px; color: #6b6b60; margin-top: 4px; font-weight: 500; line-height: 1.4; }
+  .item-card:hover { box-shadow: 0px 3px 8px rgba(119,111,95,0.12), 0px 1px 3px rgba(117,107,87,0.06); transform: translateY(-1px); }
+  .item-card:active { transform: scale(0.98); }
+  .item-card .item-title { font-weight: 600; font-size: 13px; color: #090806ec; display: block; }
+  .item-card .item-desc { font-size: 12px; color: #16140e8c; margin-top: 4px; line-height: 1.5; font-weight: 400; display: block; }
+  .item-card .item-date { font-weight: 600; font-size: 12px; color: #090806ec; display: block; margin-top: 8px; font-variant-numeric: tabular-nums; }
+  .item-card .item-countries { font-size: 11px; color: #21c1266; margin-top: 4px; font-weight: 500; line-height: 1.4; }
 
-  /* Phase colour variants */
-  .item-card.phase1 { background: #f5d4d4; border-color: #e8b8b8; }
-  .item-card.phase1 .item-title { color: #7f1d1d; }
-  .item-card.phase1 .item-date { color: #7f1d1d; }
-  .item-card.phase1 .item-desc { color: #9b3a3a; }
+  /* Phase colour variants — using Lemonade voice tokens */
+  .item-card.phase1 { background: #fb2c361a; border-color: #fb2c3680; }
+  .item-card.phase1 .item-title { color: #e7000b; }
+  .item-card.phase1 .item-date { color: #e7000b; }
+  .item-card.phase1 .item-desc { color: #9f0712; }
 
-  .item-card.phase2 { background: #f5e6c4; border-color: #e8d5a8; }
-  .item-card.phase2 .item-title { color: #78350f; }
-  .item-card.phase2 .item-date { color: #78350f; }
-  .item-card.phase2 .item-desc { color: #92400e; }
+  .item-card.phase2 { background: #fe9a001a; border-color: #ff690080; }
+  .item-card.phase2 .item-title { color: #bb4d00; }
+  .item-card.phase2 .item-date { color: #bb4d00; }
+  .item-card.phase2 .item-desc { color: #e17100; }
 
-  .item-card.phase-ga { background: #e8edd8; border-color: #d5dac5; }
-
-  /* Status dot */
-  .item-card .status-dot {
-    position: absolute; top: 8px; right: 8px;
-    width: 8px; height: 8px; border-radius: 50%;
-    border: 1.5px solid rgba(255,255,255,0.7);
-  }
-  .status-dot.done { background: #22c55e; }
-  .status-dot.in-progress { background: #D2F55E; border-color: #9ab800; }
-  .status-dot.planned { background: #d5d5cc; border-color: #c0c0b8; }
+  .item-card.phase-ga { background: #7ccf001a; border-color: #7ccf0080; }
+  .item-card.phase-ga .item-title { color: #497d00; }
+  .item-card.phase-ga .item-date { color: #497d00; }
+  .item-card.phase-ga .item-desc { color: #5ea500; }
 
   /* ── ITEM POPUP ── */
   .item-popup-overlay {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.45); z-index: 200;
+    background: rgba(11,11,10,0.5); z-index: 200;
     display: flex; align-items: center; justify-content: center;
-    opacity: 0; transition: opacity 0.15s; pointer-events: none;
+    opacity: 0; transition: opacity 0.2s ease; pointer-events: none;
   }
   .item-popup-overlay.visible { opacity: 1; pointer-events: auto; }
   .item-popup {
-    background: #fff; border-radius: 12px; padding: 28px 32px;
-    max-width: 440px; width: 90%; box-shadow: 0 24px 64px rgba(0,0,0,0.2);
-    transform: translateY(10px); transition: transform 0.15s;
+    background: #ffffff; border-radius: 24px; padding: 32px;
+    max-width: 460px; width: 90%;
+    box-shadow: 0px 24px 48px rgba(11,11,10,0.16), 0px 8px 16px rgba(11,11,10,0.08);
+    transform: translateY(12px); transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
   }
   .item-popup-overlay.visible .item-popup { transform: translateY(0); }
-  .item-popup .popup-title { font-size: 18px; font-weight: 800; color: #1a1a1a; margin-bottom: 16px; line-height: 1.3; }
-  .item-popup .popup-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; font-size: 13px; }
-  .item-popup .popup-label { font-weight: 600; color: #8a8a80; min-width: 100px; flex-shrink: 0; font-size: 12px; }
-  .item-popup .popup-value { color: #1a1a1a; font-weight: 500; }
-  .item-popup .popup-desc { background: #f5f5f0; border-radius: 8px; padding: 12px 14px; font-size: 13px; color: #3a3a30; line-height: 1.55; margin-top: 4px; }
+  .item-popup .popup-title { font-size: 18px; font-weight: 600; color: #090806ec; margin-bottom: 20px; line-height: 1.3; letter-spacing: -0.25px; }
+  .item-popup .popup-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; font-size: 14px; }
+  .item-popup .popup-label { font-weight: 500; color: #21c1266; min-width: 110px; flex-shrink: 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .item-popup .popup-value { color: #090806ec; font-weight: 500; font-size: 14px; }
+  .item-popup .popup-desc { background: #5f4f300d; border-radius: 12px; padding: 16px; font-size: 14px; color: #16140e8c; line-height: 1.55; margin-top: 4px; }
   .item-popup .popup-close {
-    display: block; margin: 20px auto 0; background: #1a1a1a; color: #fff;
-    border: none; border-radius: 6px; padding: 10px 28px; font-size: 13px;
-    font-weight: 600; cursor: pointer; font-family: inherit;
+    display: block; margin: 24px auto 0; background: #0b0b0a; color: #fff;
+    border: none; border-radius: 12px; padding: 12px 32px; font-size: 14px;
+    font-weight: 600; cursor: pointer; font-family: "Figtree", sans-serif;
+    transition: background 0.15s ease;
   }
-  .item-popup .popup-close:hover { background: #333; }
+  .item-popup .popup-close:hover { background: #252422; }
   .item-popup .popup-phase-badge {
-    display: inline-block; padding: 3px 10px; border-radius: 4px;
-    font-size: 11px; font-weight: 700; color: #fff; letter-spacing: 0.3px;
+    display: inline-block; padding: 4px 12px; border-radius: 8px;
+    font-size: 12px; font-weight: 600; color: #fff; letter-spacing: 0.3px;
   }
-  .popup-phase-badge.badge-phase1 { background: #ef4444; }
-  .popup-phase-badge.badge-phase2 { background: #f59e0b; }
-  .popup-phase-badge.badge-ga { background: #6aa100; }
+  .popup-phase-badge.badge-phase1 { background: #fb2c36; }
+  .popup-phase-badge.badge-phase2 { background: #e17100; }
+  .popup-phase-badge.badge-ga { background: #5ea500; }
 
   /* ── FOOTER ── */
   .footer {
-    background: #1a1a1a; padding: 10px 28px;
+    background: #0b0b0a; padding: 12px 24px;
     display: flex; justify-content: space-between; align-items: center;
-    font-size: 11px; color: rgba(255,255,255,0.4);
+    font-size: 12px; color: #ffffffb2;
   }
-  .footer .live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #D2F55E; margin-right: 4px; vertical-align: middle; }
-  .footer .offline-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #ef5350; margin-right: 4px; vertical-align: middle; }
-
-  /* ── METRICS TABLES ── */
-  .metrics-section { padding: 40px 28px 48px; background: #f5f5f0; }
-  .metrics-section .table-label {
-    font-size: 10px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 1.5px; color: #8a8a80; margin-bottom: 8px;
-  }
-  .metrics-section h2 { font-size: 18px; font-weight: 800; margin-bottom: 6px; color: #1a1a1a; }
-  .metrics-section .metrics-intro { font-size: 13px; color: #6b6b60; margin-bottom: 20px; }
-  .metrics-table {
-    width: 100%; border-collapse: collapse; background: #fff;
-    border-radius: 8px; overflow: hidden;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 40px;
-  }
-  .metrics-table th {
-    background: #ededea; font-size: 10px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.5px; color: #6b6b60;
-    padding: 12px 10px; text-align: center; border-bottom: 2px solid #d5d5cc;
-  }
-  .metrics-table th:first-child { text-align: left; padding-left: 16px; }
-  .metrics-table td {
-    padding: 10px 8px; text-align: center; vertical-align: top;
-    border-bottom: 1px solid #eaeae5; font-size: 13px;
-  }
-  .metrics-table td:first-child { text-align: left; font-weight: 600; padding-left: 16px; font-size: 13px; min-width: 200px; color: #1a1a1a; }
-  .metrics-table tr:last-child td { border-bottom: none; }
-  .metrics-table tr:hover { background: #fafaf6; }
-  .metrics-desc { font-size: 11px; color: #8a8a80; margin-top: 2px; font-weight: 400; }
-  .boundary-cell {
-    background: #f5f5f0; border-radius: 4px; padding: 8px 12px;
-    font-size: 12px; color: #8a8a80; font-style: italic;
-  }
-  .phase-header { position: relative; }
-  .phase-header.p1::after { content: ''; position: absolute; bottom: 0; left: 10%; right: 10%; height: 3px; background: #ef4444; border-radius: 3px 3px 0 0; }
-  .phase-header.p1 { color: #991b1b; }
-  .phase-header.p2::after { content: ''; position: absolute; bottom: 0; left: 10%; right: 10%; height: 3px; background: #f59e0b; border-radius: 3px 3px 0 0; }
-  .phase-header.p2 { color: #92400e; }
-  .alert-header { position: relative; }
-  .alert-header.caution::after { content: ''; position: absolute; bottom: 0; left: 20%; right: 20%; height: 3px; background: #f59e0b; border-radius: 3px 3px 0 0; }
-  .alert-header.revert::after { content: ''; position: absolute; bottom: 0; left: 20%; right: 20%; height: 3px; background: #ef4444; border-radius: 3px 3px 0 0; }
+  .footer .live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #e1e51a; margin-right: 6px; vertical-align: middle; }
+  .footer .offline-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #fb2c36; margin-right: 6px; vertical-align: middle; }
 </style>
 </head>
 <body>
@@ -221,14 +156,12 @@
 <!-- TOP BAR -->
 <div class="topbar">
   <div class="topbar-left">
-    <span class="topbar-title">IMO 3 - Q2 2026 Roadmap</span>
+    <span class="topbar-title">IMO 3 &mdash; Q2 2026 Roadmap</span>
     <span class="topbar-badge">Q2</span>
     <span class="topbar-update" id="lastUpdate"></span>
   </div>
   <div class="topbar-right">
-    <div class="topbar-legend">
-    </div>
-    <span id="connIndicator" style="font-size:10px;color:rgba(255,255,255,0.35);"></span>
+    <span id="connIndicator" style="font-size:11px;color:#ffffffb2;"></span>
   </div>
 </div>
 
@@ -246,11 +179,10 @@
   <div class="roadmap" id="roadmapGrid"></div>
 </div>
 
-
 <!-- FOOTER -->
 <div class="footer">
   <span>IMO 3 &middot; Q2 2026</span>
-  <span>April &ndash; June &middot; By Country</span>
+  <span>April &ndash; June</span>
 </div>
 
 <script>
@@ -259,12 +191,6 @@ const MONTH_FULL = ['January','February','March','April','May','June','July','Au
 const CURRENT_MONTH = new Date().getMonth();
 const CURRENT_YEAR = 2026;
 const Q2_MONTHS = [3, 4, 5];
-
-const COUNTRY_FLAGS = {
-  'UK': '\u{1F1EC}\u{1F1E7}', 'Iceland': '\u{1F1EE}\u{1F1F8}', 'Hungary': '\u{1F1ED}\u{1F1FA}',
-  'Czech Republic': '\u{1F1E8}\u{1F1FF}', 'Croatia': '\u{1F1ED}\u{1F1F7}', 'Slovakia': '\u{1F1F8}\u{1F1F0}',
-  'Portugal': '\u{1F1F5}\u{1F1F9}', 'Italy': '\u{1F1EE}\u{1F1F9}', 'Spain': '\u{1F1EA}\u{1F1F8}'
-};
 
 function generateMonthWeeks(year) {
   const slots = [];
@@ -490,7 +416,7 @@ function render() {
   swimlanes.forEach((sl, idx) => {
     const label = document.createElement('div');
     label.className = 'swimlane-label';
-    label.innerHTML = `<span class="sl-name">${escHtml(sl.name)}</span>` + (sl.id === 's2c' ? '<div style="font-size:11px;color:#78570a;margin-top:6px;line-height:1.4;"><strong>⚠</strong> Items missing because still being scoped: <em>New pricing page in app and portal, new pricing calculator, dynamic pricing, support of contracts for pay-once offers.</em></div>' : '');
+    label.innerHTML = `<span class="sl-name">${escHtml(sl.name)}</span>` + (sl.id === 's2c' ? '<div style="font-size:11px;color:#bb4d00;margin-top:6px;line-height:1.5;font-weight:400;">Items missing because still being scoped: <em>New pricing page in app and portal, new pricing calculator, dynamic pricing, support of contracts for pay-once offers.</em></div>' : '');
     grid.appendChild(label);
 
     const slItems = items.filter(it => it.swimlaneId === sl.id);
@@ -527,11 +453,11 @@ function showPopup(item) {
   html += `<div class="popup-row"><span class="popup-label">Workstream</span><span class="popup-value">${escHtml(swimlaneName)}</span></div>`;
   const countries = (item._countries && item._countries.length > 0) ? item._countries.join(', ') : subRowName;
   if (countries) html += `<div class="popup-row"><span class="popup-label">Country</span><span class="popup-value">${escHtml(countries)}</span></div>`;
-  html += `<div class="popup-row"><span class="popup-label">Delivery Date</span><span class="popup-value">${escHtml(endDate)}</span></div>`;
-  html += `<div class="popup-row"><span class="popup-label">Start Date</span><span class="popup-value">${escHtml(startDate)}</span></div>`;
+  html += `<div class="popup-row"><span class="popup-label">Delivery</span><span class="popup-value">${escHtml(endDate)}</span></div>`;
+  html += `<div class="popup-row"><span class="popup-label">Start</span><span class="popup-value">${escHtml(startDate)}</span></div>`;
   if (item.owner) html += `<div class="popup-row"><span class="popup-label">Owner</span><span class="popup-value">${escHtml(item.owner)}</span></div>`;
   if (item.description) html += `<div class="popup-row"><span class="popup-label">Description</span></div><div class="popup-desc">${escHtml(item.description)}</div>`;
-  else html += `<div class="popup-row"><span class="popup-label">Description</span><span class="popup-value" style="color:#8a8a80;font-style:italic;">No description provided</span></div>`;
+  else html += `<div class="popup-row"><span class="popup-label">Description</span><span class="popup-value" style="color:#21c1266;font-style:italic;">No description provided</span></div>`;
 
   bodyEl.innerHTML = html;
   overlay.classList.add('visible');
