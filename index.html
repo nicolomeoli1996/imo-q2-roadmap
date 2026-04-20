@@ -108,6 +108,7 @@
   .item-card .item-title { font-weight: 700; font-size: 12px; color: #1a1a1a; display: block; }
   .item-card .item-desc { font-size: 11px; color: #5a5a50; margin-top: 4px; line-height: 1.45; font-weight: 400; display: block; }
   .item-card .item-date { font-weight: 700; font-size: 11px; color: #1a1a1a; display: block; margin-top: 6px; }
+  .item-card .item-countries { font-size: 10px; color: #6b6b60; margin-top: 4px; font-weight: 500; line-height: 1.4; }
 
   /* Phase colour variants */
   .item-card.phase1 { background: #f5d4d4; border-color: #e8b8b8; }
@@ -308,7 +309,7 @@ const FIREBASE_CONFIG = {
   appId: "1:438198445146:web:3ee052573ed2f302966463",
   measurementId: "G-8Q8F1PJNDC"
 };
-const FIREBASE_DB_PATH = 'roadmap_q2_v25';
+const FIREBASE_DB_PATH = 'roadmap_q2_v26';
 
 let data = { swimlanes: [], items: [] };
 
@@ -376,12 +377,11 @@ function render() {
   const visibleSlotIdxs = Q2_SLOTS.map(s => s.idx);
   const colCount = visibleSlotIdxs.length;
 
-  grid.style.gridTemplateColumns = `160px 120px repeat(${colCount}, minmax(140px, 1fr))`;
+  grid.style.gridTemplateColumns = `200px repeat(${colCount}, minmax(140px, 1fr))`;
 
   // Month headers
   const cornerMonth = document.createElement('div');
   cornerMonth.className = 'month-group-header corner';
-  cornerMonth.style.gridColumn = 'span 2';
   cornerMonth.textContent = '';
   grid.appendChild(cornerMonth);
 
@@ -402,7 +402,6 @@ function render() {
   // Week headers
   const cornerWeek = document.createElement('div');
   cornerWeek.className = 'week-header corner';
-  cornerWeek.style.gridColumn = 'span 2';
   cornerWeek.textContent = '';
   grid.appendChild(cornerWeek);
 
@@ -420,7 +419,23 @@ function render() {
     prevMonthIdx = s.monthIdx;
   });
 
-  // Render cells
+  // Group items by title+endDate, merging countries
+  function mergeItems(rawItems) {
+    const groups = {};
+    rawItems.forEach(it => {
+      const key = (it.title || '') + '||' + (it.endDate || '');
+      if (!groups[key]) {
+        groups[key] = { ...it, _countries: it.subRow ? [it.subRow] : [] };
+      } else {
+        if (it.subRow && !groups[key]._countries.includes(it.subRow)) {
+          groups[key]._countries.push(it.subRow);
+        }
+      }
+    });
+    return Object.values(groups);
+  }
+
+  // Render cells for a flat row
   function renderSlotCells(grid, slItems, visibleSlotIdxs, extraCls) {
     let prevMonth = -1;
     visibleSlotIdxs.forEach(sIdx => {
@@ -450,11 +465,13 @@ function render() {
 
         const deliveryDate = formatDateShort(it.endDate);
         const descText = it.description ? escHtml(it.description) : '';
+        const countries = (it._countries && it._countries.length > 0) ? it._countries.join(', ') : '';
 
         card.innerHTML =
           `<div class="item-title">${escHtml(it.title)}</div>` +
           (descText ? `<div class="item-desc">${descText}</div>` : '') +
-          `<div class="item-date">${escHtml(deliveryDate)}</div>`;
+          `<div class="item-date">${escHtml(deliveryDate)}</div>` +
+          (countries ? `<div class="item-countries">${escHtml(countries)}</div>` : '');
 
         card.addEventListener('click', () => showPopup(it));
         itemsContainer.appendChild(card);
@@ -466,42 +483,19 @@ function render() {
     });
   }
 
-  // Swimlane rows
+  // Swimlane rows — all rendered as flat single rows
   const swimlanes = data.swimlanes || [];
   const items = data.items || [];
 
   swimlanes.forEach((sl, idx) => {
-    const hasSubRows = sl.subRows && sl.subRows.length > 0;
+    const label = document.createElement('div');
+    label.className = 'swimlane-label';
+    label.innerHTML = `<span class="sl-name">${escHtml(sl.name)}</span>` + (sl.id === 's2c' ? '<div style="font-size:11px;color:#78570a;margin-top:6px;line-height:1.4;"><strong>⚠</strong> Items missing because still being scoped: <em>New pricing page in app and portal, new pricing calculator, dynamic pricing, support of contracts for pay-once offers.</em></div>' : '');
+    grid.appendChild(label);
 
-    if (hasSubRows) {
-      const label = document.createElement('div');
-      label.className = 'swimlane-label parent-label';
-      label.style.gridRow = `span ${sl.subRows.length}`;
-      label.innerHTML = `<span class="sl-name">${escHtml(sl.name)}</span>`;
-      grid.appendChild(label);
-
-      const allSlItems = items.filter(it => it.swimlaneId === sl.id);
-
-      sl.subRows.forEach((sr, srIdx) => {
-        const isLast = srIdx === sl.subRows.length - 1;
-        const srLabel = document.createElement('div');
-        srLabel.className = 'subrow-label' + (isLast ? ' last-subrow' : '');
-        srLabel.innerHTML = `<span class="subrow-name">${escHtml(sr)}</span>`;
-        grid.appendChild(srLabel);
-
-        const srItems = allSlItems.filter(it => it.subRow === sr);
-        const cellCls = ' subrow-cell' + (isLast ? ' last-subrow' : '');
-        renderSlotCells(grid, srItems, visibleSlotIdxs, cellCls);
-      });
-    } else {
-      const label = document.createElement('div');
-      label.className = 'swimlane-label';
-      label.style.gridColumn = 'span 2';
-      label.innerHTML = `<span class="sl-name">${escHtml(sl.name)}</span>` + (sl.id === 's2c' ? '<div style="font-size:11px;color:#78570a;margin-top:6px;line-height:1.4;"><strong>⚠</strong> Items missing because still being scoped: <em>New pricing page in app and portal, new pricing calculator, dynamic pricing, support of contracts for pay-once offers.</em></div>' : '');
-      grid.appendChild(label);
-      const slItems = items.filter(it => it.swimlaneId === sl.id);
-      renderSlotCells(grid, slItems, visibleSlotIdxs, '');
-    }
+    const slItems = items.filter(it => it.swimlaneId === sl.id);
+    const merged = mergeItems(slItems);
+    renderSlotCells(grid, merged, visibleSlotIdxs, '');
   });
 }
 
@@ -531,7 +525,8 @@ function showPopup(item) {
   let html = '';
   if (phaseBadge) html += `<div class="popup-row">${phaseBadge}</div>`;
   html += `<div class="popup-row"><span class="popup-label">Workstream</span><span class="popup-value">${escHtml(swimlaneName)}</span></div>`;
-  if (subRowName) html += `<div class="popup-row"><span class="popup-label">Country</span><span class="popup-value">${escHtml(subRowName)}</span></div>`;
+  const countries = (item._countries && item._countries.length > 0) ? item._countries.join(', ') : subRowName;
+  if (countries) html += `<div class="popup-row"><span class="popup-label">Country</span><span class="popup-value">${escHtml(countries)}</span></div>`;
   html += `<div class="popup-row"><span class="popup-label">Delivery Date</span><span class="popup-value">${escHtml(endDate)}</span></div>`;
   html += `<div class="popup-row"><span class="popup-label">Start Date</span><span class="popup-value">${escHtml(startDate)}</span></div>`;
   if (item.owner) html += `<div class="popup-row"><span class="popup-label">Owner</span><span class="popup-value">${escHtml(item.owner)}</span></div>`;
