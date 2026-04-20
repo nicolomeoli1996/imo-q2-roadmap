@@ -232,7 +232,7 @@ const FIREBASE_CONFIG = {
   appId: "1:438198445146:web:3ee052573ed2f302966463",
   measurementId: "G-8Q8F1PJNDC"
 };
-const FIREBASE_DB_PATH = 'roadmap_q2_v26';
+const FIREBASE_DB_PATH = 'roadmap_q2_v27';
 
 let data = { swimlanes: [], items: [] };
 
@@ -381,9 +381,11 @@ function render() {
         const card = document.createElement('div');
         let cardCls = 'item-card';
         const titleLower = (it.title || '').toLowerCase();
-        if (titleLower === 'phase 1') cardCls += ' phase1';
-        else if (titleLower === 'phase 2') cardCls += ' phase2';
-        else if (titleLower === 'all customers repriced') cardCls += ' phase-ga';
+        const itemPhase = it.phase || '';
+        const itemStatus = (it.status || '').toLowerCase();
+        if (titleLower === 'phase 1' || itemPhase === 'phase1') cardCls += ' phase1';
+        else if (titleLower === 'phase 2' || itemPhase === 'phase2') cardCls += ' phase2';
+        else if (titleLower === 'all customers repriced' || itemPhase === 'ga' || itemStatus === 'complete') cardCls += ' phase-ga';
         card.className = cardCls;
 
         const deliveryDate = formatDateShort(it.endDate);
@@ -391,9 +393,10 @@ function render() {
         const countries = (it._countries && it._countries.length > 0) ? it._countries.join(', ') : '';
 
         let phaseTag = '';
-        if (titleLower === 'phase 1') phaseTag = '<span class="phase-tag tag-phase1">Phase 1</span>';
-        else if (titleLower === 'phase 2') phaseTag = '<span class="phase-tag tag-phase2">Phase 2</span>';
-        else if (titleLower === 'all customers repriced') phaseTag = '<span class="phase-tag tag-ga">Complete</span>';
+        if (titleLower === 'phase 1' || itemPhase === 'phase1') phaseTag = '<span class="phase-tag tag-phase1">Phase 1</span>';
+        else if (titleLower === 'phase 2' || itemPhase === 'phase2') phaseTag = '<span class="phase-tag tag-phase2">Phase 2</span>';
+        else if (titleLower === 'all customers repriced' || itemPhase === 'ga') phaseTag = '<span class="phase-tag tag-ga">Complete</span>';
+        else if (itemStatus === 'complete') phaseTag = '<span class="phase-tag tag-ga">Complete</span>';
 
         card.innerHTML =
           (phaseTag ? `<div>${phaseTag}</div>` : '') +
